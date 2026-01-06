@@ -19,7 +19,7 @@
 
   <custom-navbar></custom-navbar>
 
-  <section id="home" class="container mx-auto px-6 pt-36 pb-24 text-center">
+  <section id="home" class="container mx-auto px-6 pt-40 pb-24 text-center">
     <div class="liquid-card p-10 max-w-3xl mx-auto fade-in">
       
       <img src="https://i.ibb.co.com/8nW3HqLZ/IMG-20250308-075425-324.jpg" 
@@ -96,60 +96,80 @@
   </div>
 
   <script>
-    // --- 1. Navbar & Weather Component ---
+    // --- 1. Header Component (Full Size Weather) ---
     class CustomNavbar extends HTMLElement {
       connectedCallback() {
         this.innerHTML = `
-          <header class="fixed top-0 left-0 w-full z-50 flex flex-col items-center gap-2 pt-4 pointer-events-none">
+          <header class="fixed top-0 left-0 w-full z-50 flex justify-center pt-6 pointer-events-none">
             
-            <div id="weather-widget" class="pointer-events-auto px-4 py-1.5 rounded-full backdrop-blur-md bg-white/20 dark:bg-black/30 border border-white/20 shadow-lg text-xs font-medium dark:text-white animate-fade-in transition-all hover:bg-white/30 cursor-default flex items-center gap-2">
-              <span id="weather-icon">⌛</span>
-              <span id="weather-temp">Loading...</span>
+            <div id="weather-card" class="pointer-events-auto w-[90%] max-w-sm p-4 rounded-3xl backdrop-blur-xl bg-white/60 dark:bg-black/40 border border-white/40 dark:border-white/10 shadow-2xl animate-fade-in flex items-center justify-between transition-all hover:scale-[1.02]">
+              
+              <div class="flex flex-col text-left">
+                <span id="weather-location" class="text-[10px] font-bold tracking-[0.2em] opacity-60 uppercase mb-1 text-black dark:text-white">DETECTING...</span>
+                <div class="flex items-baseline gap-2">
+                    <span id="weather-temp" class="text-4xl font-bold text-black dark:text-white">--°</span>
+                    <span id="weather-desc" class="text-sm opacity-80 font-medium text-black dark:text-white">Loading</span>
+                </div>
+              </div>
+
+              <div id="weather-icon" class="text-5xl filter drop-shadow-md transform -translate-y-1">
+                ☁️
+              </div>
+
             </div>
 
-            <nav class="pointer-events-auto liquid-nav py-3 px-6 rounded-2xl shadow-xl backdrop-blur-xl flex gap-6 text-sm font-medium transition-transform hover:scale-[1.02] bg-white/80 dark:bg-black/50">
-              <a href="#home" class="hover:text-blue-400 transition-colors">Home</a>
-              <a href="#projects" class="hover:text-blue-400 transition-colors">Projects</a>
-              <a href="#tools" class="hover:text-blue-400 transition-colors">Tools</a>
-              <a href="#contact" class="hover:text-blue-400 transition-colors">Contact</a>
-            </nav>
           </header>
           <style>
-            @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-            .animate-fade-in { animation: fadeIn 0.8s ease-out forwards; }
+            @keyframes fadeIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+            .animate-fade-in { animation: fadeIn 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
           </style>
         `;
         this.initWeather();
       }
 
       initWeather() {
-        const iconEl = this.querySelector('#weather-icon');
+        const locEl = this.querySelector('#weather-location');
         const tempEl = this.querySelector('#weather-temp');
+        const descEl = this.querySelector('#weather-desc');
+        const iconEl = this.querySelector('#weather-icon');
 
-        const getWeatherIcon = (code) => {
-          const icons = { 0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️', 45: '🌫️', 61: '☔', 80: '🌧️', 95: '⚡' };
-          return icons[code] || '🌡️';
+        // Weather Code Map
+        const weatherMap = {
+          0: { icon: '☀️', text: 'Clear Sky' },
+          1: { icon: '🌤️', text: 'Mainly Clear' },
+          2: { icon: '⛅', text: 'Partly Cloudy' },
+          3: { icon: '☁️', text: 'Overcast' },
+          45: { icon: '🌫️', text: 'Foggy' },
+          51: { icon: '🌦️', text: 'Drizzle' },
+          61: { icon: '☔', text: 'Rain' },
+          80: { icon: '🌧️', text: 'Showers' },
+          95: { icon: '⚡', text: 'Thunderstorm' }
         };
 
-        const fetchWeather = (lat, lon) => {
+        const fetchWeather = (lat, lon, locationName) => {
           fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`)
             .then(res => res.json())
             .then(data => {
-              iconEl.textContent = getWeatherIcon(data.current_weather.weathercode);
-              tempEl.textContent = `${Math.round(data.current_weather.temperature)}°C`;
+              const code = data.current_weather.weathercode;
+              const info = weatherMap[code] || { icon: '🌡️', text: 'Unknown' };
+              
+              iconEl.textContent = info.icon;
+              descEl.textContent = info.text;
+              tempEl.textContent = `${Math.round(data.current_weather.temperature)}°`;
+              locEl.textContent = locationName;
             })
             .catch(() => {
-              tempEl.textContent = "Offline";
+              descEl.textContent = "Offline";
             });
         };
 
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(
-            (pos) => fetchWeather(pos.coords.latitude, pos.coords.longitude),
-            () => fetchWeather(23.8103, 90.4125) // Fallback: Dhaka
+            (pos) => fetchWeather(pos.coords.latitude, pos.coords.longitude, "YOUR LOCATION"),
+            () => fetchWeather(23.8103, 90.4125, "DHAKA, BD") // Fallback
           );
         } else {
-          fetchWeather(23.8103, 90.4125);
+          fetchWeather(23.8103, 90.4125, "DHAKA, BD");
         }
       }
     }
