@@ -13,9 +13,6 @@
   </script>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="style.css" />
-
-  <script src="Components/navbar.js" defer></script>
-  <script src="Components/footer.js" defer></script>
 </head>
 
 <body class="transition-colors duration-300 overflow-x-hidden">
@@ -99,9 +96,81 @@
   </div>
 
   <script>
-    // Note: Footer year logic moved to Components/footer.js
+    // --- 1. Navbar & Weather Component ---
+    class CustomNavbar extends HTMLElement {
+      connectedCallback() {
+        this.innerHTML = `
+          <header class="fixed top-0 left-0 w-full z-50 flex flex-col items-center gap-2 pt-4 pointer-events-none">
+            
+            <div id="weather-widget" class="pointer-events-auto px-4 py-1.5 rounded-full backdrop-blur-md bg-white/20 dark:bg-black/30 border border-white/20 shadow-lg text-xs font-medium dark:text-white animate-fade-in transition-all hover:bg-white/30 cursor-default flex items-center gap-2">
+              <span id="weather-icon">⌛</span>
+              <span id="weather-temp">Loading...</span>
+            </div>
 
-    // Chat Logic
+            <nav class="pointer-events-auto liquid-nav py-3 px-6 rounded-2xl shadow-xl backdrop-blur-xl flex gap-6 text-sm font-medium transition-transform hover:scale-[1.02] bg-white/80 dark:bg-black/50">
+              <a href="#home" class="hover:text-blue-400 transition-colors">Home</a>
+              <a href="#projects" class="hover:text-blue-400 transition-colors">Projects</a>
+              <a href="#tools" class="hover:text-blue-400 transition-colors">Tools</a>
+              <a href="#contact" class="hover:text-blue-400 transition-colors">Contact</a>
+            </nav>
+          </header>
+          <style>
+            @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+            .animate-fade-in { animation: fadeIn 0.8s ease-out forwards; }
+          </style>
+        `;
+        this.initWeather();
+      }
+
+      initWeather() {
+        const iconEl = this.querySelector('#weather-icon');
+        const tempEl = this.querySelector('#weather-temp');
+
+        const getWeatherIcon = (code) => {
+          const icons = { 0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️', 45: '🌫️', 61: '☔', 80: '🌧️', 95: '⚡' };
+          return icons[code] || '🌡️';
+        };
+
+        const fetchWeather = (lat, lon) => {
+          fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`)
+            .then(res => res.json())
+            .then(data => {
+              iconEl.textContent = getWeatherIcon(data.current_weather.weathercode);
+              tempEl.textContent = `${Math.round(data.current_weather.temperature)}°C`;
+            })
+            .catch(() => {
+              tempEl.textContent = "Offline";
+            });
+        };
+
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (pos) => fetchWeather(pos.coords.latitude, pos.coords.longitude),
+            () => fetchWeather(23.8103, 90.4125) // Fallback: Dhaka
+          );
+        } else {
+          fetchWeather(23.8103, 90.4125);
+        }
+      }
+    }
+    customElements.define("custom-navbar", CustomNavbar);
+
+    // --- 2. Footer Component ---
+    class CustomFooter extends HTMLElement {
+      connectedCallback() {
+        this.innerHTML = `
+          <footer class="mt-20 pb-6 flex justify-center">
+            <div class="glass-footer px-6 py-3 rounded-2xl text-center text-sm shadow-lg backdrop-blur-md bg-white/10 border border-white/20">
+              <p class="opacity-70">© ${new Date().getFullYear()} 一 Hɩňʌtʌ ᯓᡣ𐭩 — All Rights Reserved.</p>
+              <p class="opacity-50 text-xs mt-1">Built with 💝 and creative coding</p>
+            </div>
+          </footer>
+        `;
+      }
+    }
+    customElements.define("custom-footer", CustomFooter);
+
+    // --- 3. Chat & GitHub Logic ---
     const chatBubble = document.getElementById('chat-bubble');
     const chatModal = document.getElementById('chat-modal');
     const chatFrame = document.getElementById('chat-frame');
@@ -117,7 +186,6 @@
         if (event.data === 'close-chat') chatModal.classList.add('hidden');
     });
 
-    // GitHub API
     const username = "DevHinata";
     const grid = document.getElementById("projects-grid");
 
