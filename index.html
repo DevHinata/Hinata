@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-white text-black">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>一 Hɩňʌtʌ ᯓᡣ𐭩 — Portfolio</title>
+
+  <script>
+    tailwind.config = {
+      darkMode: "media",
+      theme: { extend: {} }
+    };
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css" />
+
+  <script src="Components/navbar.js" defer></script>
+  <script src="Components/footer.js" defer></script>
+</head>
+
+<body class="transition-colors duration-300 overflow-x-hidden">
+
+  <custom-navbar></custom-navbar>
+
+  <section id="home" class="container mx-auto px-6 pt-36 pb-24 text-center">
+    <div class="liquid-card p-10 max-w-3xl mx-auto fade-in">
+      <img src="https://i.postimg.cc/1tcxtBGk/Cid-kageno.jpg" class="w-28 h-28 rounded-full mx-auto mb-6 shadow-lg object-cover">
+      
+      <h1 class="text-5xl sm:text-6xl md:text-7xl font-bold mb-3 flex items-center justify-center gap-3">
+        <span class="whitespace-nowrap">
+          Cid <span class="opacity-70">Kageno</span>
+        </span>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Twitter_Verified_Badge.svg" 
+             alt="Verified" class="w-8 h-8 md:w-10 md:h-10 mt-2">
+      </h1>
+      
+      <p class="text-xl opacity-80 mb-6">Developer • Student</p>
+      
+      <p class="text-base opacity-90 leading-relaxed max-w-xl mx-auto mb-6">
+        I build small AI tools and explore automation through clean backend logic and minimal interfaces.
+      </p>
+      
+      <div class="flex justify-center gap-4 mt-6 flex-wrap">
+        <a href="#projects" class="liquid-btn primary-btn">Explore Work</a>
+        <a href="https://github.com/cid-kageno-dev" target="_blank" class="liquid-btn">GitHub</a>
+        <a href="https://wa.me/+8801731371266" target="_blank" class="liquid-btn">WhatsApp</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="projects" class="container mx-auto px-6 pb-32">
+    <h2 class="text-3xl font-bold text-center mb-12">Projects</h2>
+    <div id="projects-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div class="col-span-full text-center opacity-50">Loading repositories...</div>
+    </div>
+  </section>
+
+  <section id="tools" class="container mx-auto px-6 pb-32 text-center">
+    <h2 class="text-3xl font-bold mb-12">Tools</h2>
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+      <div class="liquid-card p-8 text-left">
+        <h3 class="text-xl font-semibold mb-2">Character AI</h3>
+        <p class="opacity-80 text-sm mb-4">Personality-driven character AI chat system.</p>
+        <a href="c.ai/" class="liquid-btn small-btn">Open Tool</a>
+      </div>
+      <div class="liquid-card p-8 text-left flex items-center justify-center opacity-50 border-dashed border-2 border-gray-600">
+        <span class="text-sm">More coming soon...</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="container mx-auto px-6 pb-32 text-center">
+    <div class="liquid-card p-10 max-w-2xl mx-auto fade-in">
+      <h2 class="text-3xl font-bold mb-4">Contact</h2>
+      <p class="opacity-80 mb-6">Reach out for collaborations or project ideas.</p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="mailto:hinata.dev@mail.edu" class="liquid-btn">Email</a>
+        <a href="https://www.facebook.com/share/17KPLE62qJ/" target="_blank" class="liquid-btn">Facebook</a>
+        <a href="https://wa.me/+8801959744412" target="_blank" class="liquid-btn">WhatsApp</a>
+        <a href="https://github.com/DevHinata" target="_blank" class="liquid-btn">GitHub</a>
+      </div>
+    </div>
+  </section>
+
+  <custom-footer></custom-footer>
+
+  <div id="chat-bubble" class="fixed bottom-6 right-6 w-16 h-16 flex items-center justify-center rounded-full glass dark:glass-dark shadow-2xl hover:scale-110 transition-transform cursor-pointer z-40 bg-white/10 backdrop-blur-md border border-white/20">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-black dark:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+            d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8-1.31 0-2.547-.26-3.664-.74L3 20l1.74-4.336A7.962 7.962 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+    </svg>
+  </div>
+
+  <div id="chat-modal" class="fixed inset-0 z-[999] hidden bg-black">
+    <iframe id="chat-frame" src="" data-src="chat/index.html" class="w-full h-full border-0 block"></iframe>
+  </div>
+
+  <script>
+    // Note: Footer year logic moved to Components/footer.js
+
+    // Chat Logic
+    const chatBubble = document.getElementById('chat-bubble');
+    const chatModal = document.getElementById('chat-modal');
+    const chatFrame = document.getElementById('chat-frame');
+
+    chatBubble.onclick = () => {
+        if (chatFrame.getAttribute('src') === "") {
+            chatFrame.src = chatFrame.getAttribute('data-src');
+        }
+        chatModal.classList.remove('hidden');
+    };
+
+    window.addEventListener('message', (event) => {
+        if (event.data === 'close-chat') chatModal.classList.add('hidden');
+    });
+
+    // GitHub API
+    const username = "DevHinata";
+    const grid = document.getElementById("projects-grid");
+
+    fetch(`https://api.github.com/users/${username}/repos?sort=updated`)
+      .then(r => r.json())
+      .then(repos => {
+        grid.innerHTML = "";
+        if(Array.isArray(repos)) {
+            const validRepos = repos.filter(r => !r.fork).slice(0, 6);
+            if (validRepos.length === 0) {
+              grid.innerHTML = `<div class="col-span-full text-center opacity-70">No public projects found yet.</div>`;
+              return;
+            }
+            validRepos.forEach(repo => {
+                const card = document.createElement("div");
+                card.className = "liquid-card p-6 flex flex-col justify-between hover:scale-[1.02] transition-transform duration-300";
+                card.innerHTML = `
+                    <div>
+                        <h3 class="text-xl font-bold mb-2 truncate text-blue-400">${repo.name}</h3>
+                        <p class="opacity-80 mb-4 text-sm line-clamp-3 leading-relaxed">
+                            ${repo.description || "No description provided."}
+                        </p>
+                    </div>
+                    <div class="flex items-center justify-between mt-2">
+                        <span class="text-xs px-2 py-1 rounded bg-white/10">${repo.language || 'Code'}</span>
+                        <a href="${repo.html_url}" target="_blank" class="liquid-btn small-btn">View Code</a>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+      })
+      .catch(e => {
+          console.error("GitHub API Error:", e);
+          grid.innerHTML = `<div class="col-span-full text-center text-red-400">Failed to load projects.</div>`;
+      });
+  </script>
+</body>
+</html>
