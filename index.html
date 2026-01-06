@@ -96,20 +96,17 @@
   </div>
 
   <script>
-    // --- 1. Header Component (Minimal Capsule) ---
+    // --- 1. Header Component (ABSOLUTE POSITIONING) ---
     class CustomNavbar extends HTMLElement {
       connectedCallback() {
         this.innerHTML = `
-          <header class="fixed top-0 left-0 w-full z-50 flex justify-center pt-6 pointer-events-none">
+          <header class="absolute top-0 left-0 w-full z-50 flex justify-center pt-6 pointer-events-none">
             
             <div id="weather-card" class="pointer-events-auto flex items-center gap-3 px-5 py-2.5 rounded-full backdrop-blur-xl bg-white/70 dark:bg-black/50 border border-white/40 dark:border-white/10 shadow-xl animate-fade-in transition-all hover:scale-105 cursor-default">
               
               <span id="weather-icon" class="text-xl filter drop-shadow-sm">☁️</span>
-              
               <span id="weather-temp" class="text-sm font-bold text-black dark:text-white">--°</span>
-
               <div class="h-3 w-px bg-gray-400/50"></div>
-
               <span id="weather-desc" class="text-[10px] uppercase tracking-wider font-medium opacity-70 text-black dark:text-white">Loading</span>
 
             </div>
