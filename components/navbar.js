@@ -36,7 +36,7 @@ class CustomNavbar extends HTMLElement {
     const iconEl = this.querySelector('#weather-icon');
     const tempEl = this.querySelector('#weather-temp');
 
-    // WMO Weather Codes to Emojis
+    // Weather Codes to Emojis
     const getWeatherIcon = (code) => {
       const icons = {
         0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️', 
@@ -46,10 +46,10 @@ class CustomNavbar extends HTMLElement {
         80: '🌧️', 81: '🌧️', 82: '🌧️',
         95: '⚡', 96: '⚡', 99: '⚡'
       };
-      return icons[code] || '🌡️'; // Default
+      return icons[code] || '🌡️'; 
     };
 
-    // 1. Get Location
+    // 1. Get Location (with Fallback to Dhaka)
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -57,13 +57,12 @@ class CustomNavbar extends HTMLElement {
           this.fetchWeather(latitude, longitude, widget, iconEl, tempEl, getWeatherIcon);
         },
         (error) => {
-          // Fallback: Default to Dhaka, Bangladesh if permission denied
-          console.log("Location denied, using fallback.");
+          // Fallback: Default to Dhaka
           this.fetchWeather(23.8103, 90.4125, widget, iconEl, tempEl, getWeatherIcon);
         }
       );
     } else {
-      // Fallback if geolocation not supported
+      // Fallback
       this.fetchWeather(23.8103, 90.4125, widget, iconEl, tempEl, getWeatherIcon);
     }
   }
