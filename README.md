@@ -1,4 +1,4 @@
-# DevHinata
+# DevHinata 
 
 Engineering software that moves from idea → working system → real users.
 
